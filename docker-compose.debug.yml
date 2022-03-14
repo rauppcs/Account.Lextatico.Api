@@ -1,0 +1,23 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  accountlextaticoapi:
+    image: ${DOCKER_REGISTRY-}accountlextaticoapi
+    container_name: account_lextatico_api
+    build:
+      context: .
+      dockerfile: src/Account.Lextatico.Api/Dockerfile
+    # depends_on:
+    #   - sqlserver
+    ports:
+      - 9002:9002
+      - 9003:9003
+    networks:
+      - Lextatico
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - LOCAL_DEVELOPMENT=True
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
