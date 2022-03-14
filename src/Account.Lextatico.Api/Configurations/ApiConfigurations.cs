@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Account.Lextatico.Api.Filters;
+using Account.Lextatico.Domain.Configurations;
 using Account.Lextatico.Domain.Security;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -118,6 +119,13 @@ namespace Account.Lextatico.Api.Configurations
             });
 
             services.AddAuthorizationCore();
+
+            return services;
+        }
+
+        public static IServiceCollection AddLextaticoUrlsConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<Urls>(configuration.GetSection("Urls"));
 
             return services;
         }
