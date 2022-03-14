@@ -7,6 +7,7 @@ using Account.Lextatico.Application.Services.Interfaces;
 using Account.Lextatico.Domain.Interfaces.Services;
 using Account.Lextatico.Domain.Models;
 using Account.Lextatico.Domain.Security;
+using Account.Lextatico.Domain.Exceptions;
 
 namespace Account.Lextatico.Application.Services
 {
@@ -52,7 +53,7 @@ namespace Account.Lextatico.Application.Services
 
             // TODO: AQUI VERIFICAR COMO LANÇAR 404
             if (applicationUser == null)
-                return false;
+                throw new NotFoundException($"{userForgotPassword.Email} não encontrado.");
 
             var result = await _userService.ForgotPasswordAsync(userForgotPassword.Email);
 
@@ -65,7 +66,7 @@ namespace Account.Lextatico.Application.Services
 
             // TODO: AQUI VERIFICAR COMO LANÇAR 404
             if (applicationUser == null)
-                return false;
+                throw new NotFoundException($"{userResetPassword.Email} não encontrado.");
 
             var result = await _userService.ResetPasswordAsync(userResetPassword.Email, userResetPassword.Password, userResetPassword.ResetToken);
 
