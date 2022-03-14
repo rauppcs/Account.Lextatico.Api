@@ -9,6 +9,9 @@ namespace Account.Lextatico.Application.AutoMapper.Profiles
         public ApplicationUserProfile()
         {
             // DTO TO MODEL
+            CreateMap<UserSignInDto, ApplicationUser>()
+                .ForMember(applicationUser => applicationUser.UserName,
+                options => options.MapFrom(userSignin => userSignin.Email));
 
             // MODEL TO DTO
             CreateMap<ApplicationUser, UserDetailDto>();
