@@ -59,7 +59,11 @@ namespace Account.Lextatico.Infra.Identity.Extensions
 
         public override IdentityError InvalidToken()
         {
-            return base.InvalidToken();
+            return new IdentityError
+            {
+                Code = nameof(InvalidToken),
+                Description = "Token inválido."
+            };
         }
 
         public override IdentityError InvalidUserName(string userName)

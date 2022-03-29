@@ -4,6 +4,7 @@ namespace Account.Lextatico.Domain.Dtos.Message
     {
 
         private string _locationObjectCreated = string.Empty;
+        
         public IList<Notification> Errors { get; set; } = new List<Notification>();
 
         public IList<Notification> Warnings { get; set; } = new List<Notification>();
