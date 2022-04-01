@@ -15,8 +15,6 @@ namespace Account.Lextatico.Infra.Data.Context
         {
         }
 
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
-
         public bool ActiveTransaction => CurrentTransaction != null;
 
         public IDbContextTransaction CurrentTransaction { get; private set; }
@@ -81,6 +79,8 @@ namespace Account.Lextatico.Infra.Data.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.Load("Account.Lextatico.Infra.Data"));
+
+            builder.Entity<ApplicationUser>(builder => builder.Ignore(x => x.DomainEvents));
 
             base.OnModelCreating(builder);
         }

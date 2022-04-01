@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Account.Lextatico.Domain.Models
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUser : BaseIdentityUser
     {
         public string Name { get; private set; }
-        public virtual ICollection<RefreshToken> RefreshTokens { get; } = new List<RefreshToken>();
     }
 }

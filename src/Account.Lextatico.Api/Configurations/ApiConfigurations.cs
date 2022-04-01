@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Account.Lextatico.Api.Filters;
 using Account.Lextatico.Domain.Configurations;
 using Account.Lextatico.Domain.Security;

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Account.Lextatico.Infra.Data.Extensions
 {
-    public static class EntityFramework
+    public static class EntityFrameworkExtensions
     {
         /// <summary>
         /// Define some default fields for the model.
@@ -34,6 +34,11 @@ namespace Account.Lextatico.Infra.Data.Extensions
                 .ValueGeneratedOnUpdate()
                 .HasDefaultValueSql("GETDATE()")
                 .HasColumnType("DATETIME");
+        }
+
+        public static void IgnorarEventosDominio<T>(this EntityTypeBuilder<T> builder) where T : Base
+        {
+            builder.Ignore(entidade => entidade.DomainEvents);
         }
     }
 }
