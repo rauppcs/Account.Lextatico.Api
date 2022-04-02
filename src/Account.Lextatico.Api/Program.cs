@@ -5,10 +5,14 @@ using Account.Lextatico.Infra.CrossCutting.Extensions;
 using Account.Lextatico.Infra.CrossCutting.IoC;
 using Account.Lextatico.Infra.Identity.User;
 using HealthChecks.UI.Client;
+using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using HostEnvironmentEnvExtensions = Account.Lextatico.Api.Extensions.HostEnvironmentEnvExtensions;
+using Account.Lextatico.Domain.Events;
+using Account.Lextatico.Application.EventHandlers;
+using Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions;
 
 if (HostEnvironmentEnvExtensions.IsDocker())
     Thread.Sleep(30000);
@@ -25,6 +29,8 @@ builder.Services
     .AddHttpContextAccessor()
     .AddLextaticoMessage()
     .AddLextaticoAspNetUser()
+    .AddMediatR(typeof(BaseEventHandler<>).Assembly,
+                typeof(DomainEvent).Assembly)
     .AddLextaticoEmailSettings(builder.Configuration)
     .AddLextaticoUrlsConfiguration(builder.Configuration)
     .AddLextaticoInfraServices()
@@ -40,6 +46,11 @@ builder.Services
     .AddLextaticoSwagger()
     .AddEndpointsApiExplorer();
 
+if (!builder.Environment.IsProduction())
+    builder.Services.AddLextaticoMassTransitWithRabbitMq(builder.Configuration);
+else
+    builder.Services.AddLextaticoMassTransitWithServiceBus(builder.Configuration);
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -48,6 +59,8 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("doc/swagger.json", "Account Lextatico A
 
 if (!app.Environment.IsProduction())
 {
+    await app.Services.MigrateContextDbAsync();
+
     app.UseDeveloperExceptionPage();
 }
 
@@ -97,4 +110,4 @@ app.MapHealthChecks("/healthchecks-data-ui", new HealthCheckOptions()
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

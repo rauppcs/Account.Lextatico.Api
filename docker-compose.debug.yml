@@ -9,8 +9,6 @@ services:
     build:
       context: .
       dockerfile: src/Account.Lextatico.Api/Dockerfile
-    # depends_on:
-    #   - sqlserver
     ports:
       - 9002:9002
       - 9003:9003

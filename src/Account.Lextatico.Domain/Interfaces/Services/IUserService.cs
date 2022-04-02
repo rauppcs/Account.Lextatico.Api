@@ -10,7 +10,6 @@ namespace Account.Lextatico.Domain.Interfaces.Services
     {
         Task<ApplicationUser> GetUserLoggedAsync();
         Task<ApplicationUser> GetUserByEmailAsync(string email);
-        ApplicationUser GetUserByRefreshToken(string refreshToken);
         Task<bool> CreateAsync(ApplicationUser applicationUser, string password);
         Task<bool> ForgotPasswordAsync(string email);
         Task<bool> ResetPasswordAsync(string email, string password, string resetToken);

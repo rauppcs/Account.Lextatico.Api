@@ -8,12 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.0.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Account.Lextatico.Application\Account.Lextatico.Application.csproj" />
     <ProjectReference Include="..\Account.Lextatico.Infra.CrossCutting\Account.Lextatico.Infra.CrossCutting.csproj" />
+    <ProjectReference Include="..\Account.Lextatico.Domain.Shared\Account.Lextatico.Domain.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Account.Lextatico.Domain.Configurations;
 using Account.Lextatico.Domain.Dtos.Message;
+using Account.Lextatico.Domain.Events;
 using Account.Lextatico.Domain.Interfaces.Services;
 using Account.Lextatico.Domain.Models;
 using Account.Lextatico.Infra.Identity.User;
@@ -57,18 +58,6 @@ namespace Account.Lextatico.Domain.Services
             return applicationUser;
         }
 
-        public ApplicationUser GetUserByRefreshToken(string refreshToken)
-        {
-            var applicationUser = _userManager.Users.FirstOrDefault(user => user.RefreshTokens
-                    .Any(refresh => refresh.Token == refreshToken
-                        && DateTime.UtcNow <= refresh.TokenExpiration));
-
-            if (applicationUser == null)
-                _message.AddError(string.Empty, "Token ou RefreshToken inválido, faça o login novamente.");
-
-            return applicationUser;
-        }
-
         public async Task<bool> CreateAsync(ApplicationUser applicationUser, string password)
         {
             var result = await _userManager.CreateAsync(applicationUser, password);
@@ -77,8 +66,12 @@ namespace Account.Lextatico.Domain.Services
             {
                 foreach (var error in result.Errors)
                 {
-                    _message.AddError(string.Empty, error.Description);
+                    _message.AddError(error.Description);
                 }
+            }
+            else
+            {
+                applicationUser.AddDomainEvent(new UserCreatedEvent(applicationUser));
             }
 
             return result.Succeeded;
@@ -117,6 +110,11 @@ namespace Account.Lextatico.Domain.Services
                 {
                     _message.AddError(string.Empty, error.Description);
                 }
+                
+            }
+            else
+            {
+                applicationUser.AddDomainEvent(new UserUpdatedEvent(applicationUser));
             }
 
             return result.Succeeded;
