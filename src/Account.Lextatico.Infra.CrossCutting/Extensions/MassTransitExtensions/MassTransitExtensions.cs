@@ -16,12 +16,12 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions
     {
         public static IServiceCollection AddLextaticoMassTransitWithRabbitMq(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAccountHost(configuration);
+            services.AddRabbitMqAccountHost(configuration);
 
             return services;
         }
 
-        private static IServiceCollection AddAccountHost(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddRabbitMqAccountHost(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMassTransit(x =>
             {
@@ -31,11 +31,45 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions
 
                     cfg.Publish<INotification>(x => x.Exclude = true);
 
-                    cfg.ConfigurationAccountHost(configuration);
+                    cfg.ConfigurationRabbitMqAccountHost(configuration);
 
-                    cfg.AddMassTransitDirectPublisher<UserCreatedEvent>("lextatico.exchange:UserCreatedEvent");
+                    cfg.AddRabbitMqMassTransitDirectPublisher<UserCreatedEvent>("lextatico.exchange.UserCreatedEvent");
 
-                    cfg.AddMassTransitDirectPublisher<UserUpdatedEvent>("lextatico.exchange:UserUpdatedEvent");
+                    cfg.AddRabbitMqMassTransitDirectPublisher<UserUpdatedEvent>("lextatico.exchange.UserUpdatedEvent");
+
+                    cfg.UseRawJsonSerializer(isDefault: true);
+
+                    cfg.UseRawJsonDeserializer(isDefault: true);
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddLextaticoMassTransitWithServiceBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddServiceBusAccountHost(configuration);
+
+            return services;
+        }
+
+        private static IServiceCollection AddServiceBusAccountHost(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddMassTransit(x =>
+            {
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Publish<DomainEvent>(x => x.Exclude = true);
+
+                    cfg.Publish<INotification>(x => x.Exclude = true);
+
+                    cfg.ConfigurationServiceBusAccountHost(configuration);
+
+                    cfg.AddServiceBusMassTransitDirectPublisher<UserCreatedEvent>("lextatico.exchange.UserCreatedEvent");
+
+                    cfg.AddServiceBusMassTransitDirectPublisher<UserUpdatedEvent>("lextatico.exchange.UserUpdatedEvent");
 
                     cfg.UseRawJsonSerializer(isDefault: true);
 
