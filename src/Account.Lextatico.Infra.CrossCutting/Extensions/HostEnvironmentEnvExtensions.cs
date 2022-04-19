@@ -1,4 +1,6 @@
-namespace Account.Lextatico.Api.Extensions
+using Microsoft.Extensions.Hosting;
+
+namespace Account.Lextatico.Infra.CrossCutting.Extensions
 {
     public static class HostEnvironmentEnvExtensions
     {

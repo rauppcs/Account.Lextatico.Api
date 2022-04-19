@@ -23,7 +23,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions
 
         private static IServiceCollection AddRabbitMqAccountHost(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMassTransit(x =>
+            services.AddMassTransit<IAccountBus>(x =>
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
@@ -57,7 +57,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions
 
         private static IServiceCollection AddServiceBusAccountHost(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMassTransit(x =>
+            services.AddMassTransit<IAccountBus>(x =>
             {
                 x.UsingAzureServiceBus((context, cfg) =>
                 {

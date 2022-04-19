@@ -1,14 +1,13 @@
 using System.Net;
+using Account.Lextatico.Infra.CrossCutting.Extensions;
 using Account.Lextatico.Infra.Data.Context;
-using Account.Lextatico.Infra.Data.Extensions;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace Account.Lextatico.Infra.CrossCutting.Extensions
+namespace Account.Lextatico.Infra.CrossCutting.Middlewares
 {
-    public static class TransactionUnitExtension
+    public static class TransactionUnitExtensions
     {
         public static IApplicationBuilder UseTransaction(this IApplicationBuilder app)
         {
@@ -30,7 +29,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext, IMediator mediator)
+        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext)
         {
             try
             {
@@ -51,10 +50,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions
                         var pathSplit = httpContext.Request.Path.Value.Split("/");
 
                         if (httpStatusCode.IsSuccess() || pathSplit.Contains("login"))
-                        {
                             await lextaticoContext.SubmitTransactionAsync(transaction);
-                            await mediator.DispatchDomainEventsAsync(lextaticoContext);
-                        }
                         else
                         {
                             await lextaticoContext.UndoTransaction(transaction);
@@ -67,10 +63,12 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions
                     await _next(httpContext);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await lextaticoContext.UndoTransaction();
                 await lextaticoContext.DiscardCurrentTransactionAsync();
+
+                throw ex;
             }
         }
     }

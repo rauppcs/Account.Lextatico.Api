@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Lextatico.Infra.Identity.User;
+using Account.Lextatico.Infra.Identity.User;
 using Microsoft.AspNetCore.Http;
 
 namespace Account.Lextatico.Infra.Identity.User
