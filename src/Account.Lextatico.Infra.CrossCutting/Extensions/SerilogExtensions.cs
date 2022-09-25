@@ -18,7 +18,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Extensions
             {
                 cfg.Enrich.FromLogContext();
 
-                cfg.Enrich.WithProperty("Application", "Auth.Lextatico.Api");
+                cfg.Enrich.WithProperty("Application", "Account.Lextatico.Api");
 
                 cfg.Enrich.WithMachineName();
 

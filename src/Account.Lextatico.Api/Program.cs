@@ -7,12 +7,12 @@ using HealthChecks.UI.Client;
 using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json;
 using HostEnvironmentEnvExtensions = Account.Lextatico.Infra.CrossCutting.Extensions.HostEnvironmentEnvExtensions;
 using Account.Lextatico.Domain.Events;
 using Account.Lextatico.Application.EventHandlers;
 using Account.Lextatico.Infra.CrossCutting.Extensions.MassTransitExtensions;
 using Account.Lextatico.Infra.CrossCutting.Middlewares;
+using System.Text.Json;
 
 if (HostEnvironmentEnvExtensions.IsDocker())
     Thread.Sleep(30000);
@@ -83,6 +83,8 @@ app.UseAuthorization();
 
 app.UseRequestSerilog();
 
+app.UseLogging();
+
 app.UseErrorHandling();
 
 app.UseTransaction();
@@ -92,7 +94,7 @@ app.MapHealthChecks("/status",
               {
                   ResponseWriter = async (context, report) =>
                   {
-                      var result = JsonConvert.SerializeObject(
+                      var result = JsonSerializer.Serialize(
                           new
                           {
                               statusApplication = report.Status.ToString(),

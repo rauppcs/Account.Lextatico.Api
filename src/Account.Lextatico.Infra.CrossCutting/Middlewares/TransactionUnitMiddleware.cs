@@ -4,6 +4,8 @@ using Account.Lextatico.Infra.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
+using Account.Lextatico.Infra.Data.Extensions;
 
 namespace Account.Lextatico.Infra.CrossCutting.Middlewares
 {
@@ -29,7 +31,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Middlewares
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext)
+        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext, IMediator mediator)
         {
             try
             {
@@ -50,7 +52,11 @@ namespace Account.Lextatico.Infra.CrossCutting.Middlewares
                         var pathSplit = httpContext.Request.Path.Value.Split("/");
 
                         if (httpStatusCode.IsSuccess() || pathSplit.Contains("login"))
+                        {
                             await lextaticoContext.SubmitTransactionAsync(transaction);
+                            await mediator.DispatchDomainEventsAsync(lextaticoContext);
+                        }
+                            
                         else
                         {
                             await lextaticoContext.UndoTransaction(transaction);
