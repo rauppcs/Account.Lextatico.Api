@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Account.Lextatico.Infra.Data.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Account.Lextatico.Infra.CrossCutting.Middlewares
 {
@@ -31,7 +32,7 @@ namespace Account.Lextatico.Infra.CrossCutting.Middlewares
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext, IMediator mediator)
+        public async Task Invoke(HttpContext httpContext, LextaticoContext lextaticoContext, IMediator mediator, ILogger<TransactionUnitMiddleware> logger)
         {
             try
             {
@@ -71,6 +72,8 @@ namespace Account.Lextatico.Infra.CrossCutting.Middlewares
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Ocorreu um erro durante a execução");
+                
                 await lextaticoContext.UndoTransaction();
                 await lextaticoContext.DiscardCurrentTransactionAsync();
 
