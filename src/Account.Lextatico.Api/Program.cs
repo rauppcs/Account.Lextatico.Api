@@ -25,8 +25,7 @@ builder.Services
     .AddHttpContextAccessor()
     .AddLextaticoMessage()
     .AddLextaticoAspNetUser()
-    .AddMediatR(typeof(BaseEventHandler<>).Assembly,
-                typeof(DomainEvent).Assembly)
+    .AddMediatR(typeof(Program).Assembly)
     .AddLextaticoEmailSettings(builder.Configuration)
     .AddLextaticoUrlsConfiguration(builder.Configuration)
     .AddLextaticoInfraServices()

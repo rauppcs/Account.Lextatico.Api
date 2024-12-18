@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Account.Lextatico.Infra.Services\Account.Lextatico.Infra.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
+  </ItemGroup>
+  
 </Project>

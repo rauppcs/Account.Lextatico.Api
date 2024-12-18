@@ -2,6 +2,7 @@ using System.Reflection;
 using Account.Lextatico.Api.Filters;
 using Account.Lextatico.Domain.Configurations;
 using Account.Lextatico.Domain.Security;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -14,19 +15,18 @@ namespace Account.Lextatico.Api.Configurations
         public static IServiceCollection AddLextaticoControllers(this IServiceCollection services)
         {
             services.AddControllers(options =>
-            {
-                // FILTERS
-                options.Filters.Add<ValidationModelAttribute>();
-
-                // CONVENCTIONS
-                options.Conventions.Add(new RouteTokenTransformerConvention(new UrlPatterner()));
-            })
-                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
-                .AddFluentValidation(options =>
                 {
-                    options.DisableDataAnnotationsValidation = true;
-                    options.RegisterValidatorsFromAssembly(Assembly.Load("Account.Lextatico.Application"));
-                });
+                    // FILTERS
+                    options.Filters.Add<ValidationModelAttribute>();
+
+                    // CONVENCTIONS
+                    options.Conventions.Add(new RouteTokenTransformerConvention(new UrlPatterner()));
+                })
+                .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+
+            services.AddFluentValidationAutoValidation(options => { options.DisableDataAnnotationsValidation = true; });
+            
+            services.AddValidatorsFromAssembly(Assembly.Load("Account.Lextatico.Application"));
 
             return services;
         }
@@ -34,12 +34,12 @@ namespace Account.Lextatico.Api.Configurations
         public static IServiceCollection AddLexitaticoCors(this IServiceCollection services)
         {
             services.AddCors(optionsCors =>
+            {
+                optionsCors.AddDefaultPolicy(optionsPolicy =>
                 {
-                    optionsCors.AddDefaultPolicy(optionsPolicy =>
-                    {
-                        optionsPolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    });
+                    optionsPolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
+            });
 
             return services;
         }
@@ -49,17 +49,17 @@ namespace Account.Lextatico.Api.Configurations
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("doc",
-                     new OpenApiInfo
-                     {
-                         Title = "Account Lextatico Api",
-                         Version = "v1",
-                         Contact = new OpenApiContact
-                         {
-                             Name = "Cassiano dos Santos Raupp",
-                             Email = "cassiano.raupp@outlook.com",
-                             Url = new Uri("https://cassiano3795.github.io/cassianoraupp/")
-                         }
-                     });
+                    new OpenApiInfo
+                    {
+                        Title = "Account Lextatico Api",
+                        Version = "v1",
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Cassiano dos Santos Raupp",
+                            Email = "cassiano.raupp@outlook.com",
+                            Url = new Uri("https://cassiano3795.github.io/cassianoraupp/")
+                        }
+                    });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -80,7 +80,7 @@ namespace Account.Lextatico.Api.Configurations
                                 Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        new string[] { }
                     }
                 });
             });
@@ -88,7 +88,8 @@ namespace Account.Lextatico.Api.Configurations
             return services;
         }
 
-        public static IServiceCollection AddLextaticoJwtConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddLextaticoJwtConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
         {
             var signingConfigurations = new SigningConfiguration(configuration["SecretKeyJwt"]);
             services.AddSingleton(signingConfigurations);
@@ -119,7 +120,8 @@ namespace Account.Lextatico.Api.Configurations
             return services;
         }
 
-        public static IServiceCollection AddLextaticoUrlsConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddLextaticoUrlsConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
         {
             services.Configure<Urls>(configuration.GetSection("Urls"));
 
