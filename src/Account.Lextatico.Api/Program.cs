@@ -38,6 +38,7 @@ builder.Services
     .AddLextaticoJwtConfiguration(builder.Configuration)
     .AddLexitaticoCors()
     .AddLextaticoControllers()
+    .AddLextaticoApiVersioning()
     .AddLextaticoSwagger()
     .AddEndpointsApiExplorer();
 
@@ -48,9 +49,7 @@ else
 
 var app = builder.Build();
 
-app.UseSwagger();
-
-app.UseSwaggerUI(c => c.SwaggerEndpoint("doc/swagger.json", "Account Lextatico Api v1"));
+app.UseLextaticoSwagger();
 
 if (!app.Environment.IsProduction())
 {

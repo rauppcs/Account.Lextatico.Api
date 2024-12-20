@@ -1,14 +1,14 @@
-using System.Threading.Tasks;
-using Account.Lextatico.Api.Controllers.Base;
 using Account.Lextatico.Application.Dtos.User;
 using Account.Lextatico.Application.Services.Interfaces;
 using Account.Lextatico.Domain.Dtos.Message;
 using Account.Lextatico.Infra.Services.Interfaces;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Account.Lextatico.Api.Controllers
+namespace Account.Lextatico.Api.Controllers.V1
 {
+    [ApiVersion("1.0")]
     public class AccountController : LextaticoController
     {
         private readonly IUserAppService _userAppService;
