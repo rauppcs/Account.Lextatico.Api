@@ -25,7 +25,7 @@ namespace Account.Lextatico.Api.Configurations
                 .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
             services.AddFluentValidationAutoValidation(options => { options.DisableDataAnnotationsValidation = true; });
-            
+
             services.AddValidatorsFromAssembly(Assembly.Load("Account.Lextatico.Application"));
 
             return services;

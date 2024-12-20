@@ -28,27 +28,18 @@ namespace Account.Lextatico.Application.Validators
                 {
                     var passwordValidator = _userManager.PasswordValidators.FirstOrDefault();
 
-                    var result = passwordValidator.ValidateAsync(_userManager, null, password).Result;
+                    var result = passwordValidator?.ValidateAsync(_userManager, null, password)
+                        .GetAwaiter()
+                        .GetResult();
 
-                    if (!result.Succeeded)
+                    if (result is not { Succeeded: true }) return;
+                    
+                    var messages = result.Errors.Select(error => error.Description);
+                    foreach (var message in messages)
                     {
-                        var messages = result.Errors.Select(error => error.Description);
-
-                        foreach (var message in messages)
-                        {
-                            context.AddFailure("", message);
-                        }
+                        context.AddFailure("", message);
                     }
-                })
-               .MustAsync(async (password, cancelationToken) =>
-               {
-                   var passwordValidator = _userManager.PasswordValidators.FirstOrDefault();
-
-                   var result = await passwordValidator.ValidateAsync(_userManager, null, password);
-
-                   return result.Succeeded;
-               })
-               .WithMessage("Senha informada não é válida.");
+                });
         }
     }
 }
