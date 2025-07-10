@@ -10,11 +10,11 @@ namespace Account.Lextatico.Domain.Events
     {
         public DomainEvent(string routingKey)
         {
-            RountingKey = routingKey;
+            RoutingKey = routingKey;
         }
 
         public Guid Id { get; private set; } = Guid.NewGuid();
 
-        public string RountingKey { get; private set; }
+        public string RoutingKey { get; private set; }
     }
 }
