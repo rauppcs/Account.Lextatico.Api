@@ -4,7 +4,7 @@ services:
     container_name: account_lextatico_api
     build:
       context: .
-      dockerfile: src/Account.Lextatico.Api/Dockerfile
+      dockerfile: src/Account.Lextatico.Api/Dockerfile-debug
     ports:
       - 9002:9002
       - 9003:9003
